@@ -1,0 +1,33 @@
+apply plugin: 'groovy'
+apply plugin: 'jacoco'
+
+sourceSets.main.groovy.srcDirs = ['src']
+sourceSets.test.groovy.srcDirs = ['test']
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile 'org.codehaus.groovy:groovy-all:2.3.6'
+	testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+}  
+
+task(runui, dependsOn: 'classes', type: JavaExec) {
+  main = 'minesweeper.ui.MinesweeperGUI'
+  classpath = sourceSets.main.runtimeClasspath
+}
+
+jacocoTestReport {
+    doFirst{
+        classDirectories = files('./build/classes/main/minesweeper')
+    }
+
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "build/reports/coverageHtml"
+    }
+}
+
+defaultTasks 'clean', 'test', 'jacocoTestReport', 'runui'
